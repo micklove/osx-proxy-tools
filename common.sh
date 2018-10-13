@@ -25,7 +25,6 @@ register_exit_handler() {
 validate_proxy_user_name() {
   declare PROXY_USER="${1}"
   declare PROXY_USER_REGEX="${2}"
-    echo "Using REGEX [${PROXY_USER_REGEX}]"
   if [[ ! ${PROXY_USER} =~ ${PROXY_USER_REGEX} ]]; then
     printf "Invalid Username [${PROXY_USER}]\nPROXY_USER should match the regex, \"${2}\" "
     exit 1
@@ -136,6 +135,13 @@ dump_location_details() {
     dump_details_for_service "Wi-Fi"
     dump_details_for_service "Ethernet"
     printf "\nAvailable Locations:${SEPARATOR}$(networksetup -listlocations)\n"
+}
+
+clean_env_vars() {
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    unset http_proxy
+    unset https_proxy
 }
 
 export -f register_exit_handler
