@@ -153,3 +153,4 @@ export -f dump_location_details
 export -f start_proxy
 export -f status_proxy
 export -f stop_proxy
+export -f clean_env_vars

@@ -40,6 +40,14 @@ nb: Uses proxy username and password from the keychain.
 ```bash
 ./run-proxy.sh /path/to/proxy-config.json
 ```
+
+
+#### 5. Add Proxy config as env variables
+To use the proxy on the command line, `source` the [add-proxy-details-to-env.sh](add-proxy-details-to-env.sh) file
+```bash
+source ./add-proxy-details-to-env.sh /path/to/proxy-config.json
+```
+
 nb: If you `source` the [common.sh](common.sh) script, you can use the following helper functions:
 
 ```bash
@@ -49,7 +57,6 @@ status_proxy Wi-Fi
 status_proxy Ethernet
 stop_proxy Wi-Fi
 dump_location_details
-```
+clean_env_vars
 
-#### 5. Add Proxy config as env variables
-TODO
+```
