@@ -1,0 +1,22 @@
+{
+  "keychain": {
+    "proxy-service-name-in-keychain": "proxy-myco"
+  },
+  "location": {
+    "name": "myco-vpn",
+    "dnsservers": "10.10.10.10 1.1.1.1 192.168.1.1"
+  },
+  "proxy": {
+    "owner": "myco",
+    "host": "myco.proxy.com.au",
+    "port": "8080",
+    "scheme": "http",
+    "bypass-domains": "*.local, 169.254/16, *.corp.myco.com, localhost, *.in.myco.com.au, *.other.myco.com",
+    "proxy-username-regex": "^d[0-9]{6}"
+  },
+  "vpn": {
+    "scheme": "https",
+    "host": "vpn.myco.com/"
+  }
+}
+
