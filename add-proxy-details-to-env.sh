@@ -36,9 +36,10 @@ echo "PROXY_USER=${PROXY_USER}"
 echo "PROXY_HOST=${PROXY_HOST}"
 echo "PROXY_PORT=${PROXY_PORT}"
 
-export  HTTP_PROXY="${PROXY_SCHEME}://${PROXY_USER}:${PROXY_PASSWORD}\@${PROXY_HOST}:${PROXY_PORT}/"
-export  http_proxy="${PROXY_SCHEME}://${PROXY_USER}:${PROXY_PASSWORD}\@${PROXY_HOST}:${PROXY_PORT}/"
-export HTTPS_PROXY="${PROXY_SCHEME}://${PROXY_USER}:${PROXY_PASSWORD}\@${PROXY_HOST}:${PROXY_PORT}/"
-export https_proxy="${PROXY_SCHEME}://${PROXY_USER}:${PROXY_PASSWORD}\@${PROXY_HOST}:${PROXY_PORT}/"
+declare PROXY_URI=${PROXY_SCHEME}://"${PROXY_USER}:${PROXY_PASSWORD}"\@${PROXY_HOST}:${PROXY_PORT}/
+export  HTTP_PROXY="${PROXY_URI}"
+export  http_proxy="${PROXY_URI}"
+export HTTPS_PROXY="${PROXY_URI}"
+export https_proxy="${PROXY_URI}"
 
 validate_location

@@ -48,7 +48,7 @@ create_proxy() {
     fi
 
     sudo networksetup -setproxybypassdomains "${NETWORK_SERVICE_NAME}" "${PROXY_BYPASS_DOMAINS}"
-    dump_proxy_state "${NETWORK_SERVICE_NAME}"
+    dump_details_for_service "${NETWORK_SERVICE_NAME}"
 }
 
 #

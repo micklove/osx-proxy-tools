@@ -83,13 +83,13 @@ function get_proxy_password_from_keychain() {
 
 function dump_proxy_state() {
     declare NETWORK_SERVICE_NAME=${1}
-    printf "\nWeb Proxy State:\n================\n"
+    printf "\n${NETWORK_SERVICE_NAME} - Web Proxy State:\n================\n"
     networksetup -getwebproxy "${NETWORK_SERVICE_NAME}"
 
-    printf "\nSecure Web Proxy State:\n=======================\n"
+    printf "\n${NETWORK_SERVICE_NAME} - Secure Web Proxy State:\n=======================\n"
     networksetup -getsecurewebproxy "${NETWORK_SERVICE_NAME}"
 
-    printf "\nBypassed Domains:\n==================\n"
+    printf "\n${NETWORK_SERVICE_NAME} - Bypassed Domains:\n==================\n"
     networksetup -getproxybypassdomains "${NETWORK_SERVICE_NAME}"
 }
 
@@ -127,8 +127,10 @@ dump_details_for_service() {
     then
         printf "\n\n${SERVICE} DNS:${SEPARATOR}$(networksetup -getdnsservers ${SERVICE})\n"
         dump_proxy_state ${SERVICE}
+        networksetup -getinfo ${SERVICE}
     fi
 }
+
 dump_location_details() {
 
     printf "\nCurrent Location:${SEPARATOR}$(networksetup -getcurrentlocation)"

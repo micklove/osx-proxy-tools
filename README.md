@@ -60,3 +60,19 @@ dump_location_details
 clean_env_vars
 
 ```
+
+#### 6. Run, using aliases
+Add the following to your .bashrc or .bash_profile, changing the alias names/paths as required
+```bash
+
+## Switch to the Location to be used for the vpn, then run the vpn script
+alias myvpn='/path/to/scripts/run-location.sh /path/to/scripts/my-proxy-config.json myco-vpn && /path/to/scripts/run-vpn.sh /path/to/scripts/my-proxy-config.json'
+
+## Switch back to the non vpn Location, e.g. Home
+alias home='/path/to/scripts/run-location.sh /path/to/scripts/my-proxy-config.json home'
+
+
+## Enable the proxy and expose proxy vars to bash env
+alias myproxy='/path/to/scripts/run-proxy.sh /path/to/scripts/my-proxy-config.json && source /path/to/scripts/add-proxy-details-to-env.sh /path/to/scripts/my-proxy-config.json'
+
+```

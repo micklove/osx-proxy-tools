@@ -23,6 +23,20 @@ declare VPN_SCHEME=$(get_config_key "${CONFIG_FILE_PATH}" '.vpn.scheme')
 declare VPN_URI="${VPN_SCHEME}://${VPN_HOST}"
 declare NETWORK_SERVICE_NAME="Wi-Fi"
 
+#
+# Should only use the vpn config in the network Location from the config file
+#
+validate_location() {
+    declare CONFIG_LOCATION_NAME=$(get_config_key "${CONFIG_FILE_PATH}" '.location.name')
+    declare CURRENT_LOCATION="$(networksetup -getcurrentlocation)"
+    if [[ "${CURRENT_LOCATION}" == "${CONFIG_LOCATION_NAME}" ]]; then
+        echo "Using correct Location, [${CURRENT_LOCATION}]"
+    else
+        echo "Current location is [${CURRENT_LOCATION}], Switch to Location [${CONFIG_LOCATION_NAME}], before running vpn"
+        echo "e.g. run-location.sh proxy-config.json my-vpn "
+        exit 1
+    fi
+}
 
 route_clean_up() {
     # Clear the traps
@@ -33,9 +47,9 @@ route_clean_up() {
     sudo route delete "${VPN_HOST}"
 }
 
-trap route_clean_up EXIT SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGFPE SIGTERM
+validate_location
 
-#source ./run-proxy.sh "${CONFIG_FILE_PATH}"
+trap route_clean_up EXIT SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGFPE SIGTERM
 
 echo "VPN_URI=${VPN_URI}"
 vpn_login "${VPN_URI}"
