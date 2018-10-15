@@ -1,6 +1,9 @@
 #!/bin/bash -e
 
-source common.sh
+export COMMON_LIB_PATH="$(dirname ${BASH_SOURCE[0]})/common.sh"
+#echo "COMMON_LIB_PATH=${COMMON_LIB_PATH}"
+source "${COMMON_LIB_PATH}"
+
 
 # e.g. ./run-location.sh ../proxy-config.json my-vpn
 #      ./run-location.sh ../proxy-config.json home

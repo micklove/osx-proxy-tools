@@ -14,6 +14,11 @@ on_exit() {
   exit ${RET}
 }
 
+reset_DNS() {
+    echo "Reset mDNSResponder"
+    sudo -p ${SUDO_PROMPT} killall -HUP mDNSResponder
+}
+
 #
 # add to start of scripts, if exit handler is required
 #
@@ -128,13 +133,14 @@ dump_details_for_service() {
     then
         printf "\n\n${SERVICE} DNS:${SEPARATOR}$(networksetup -getdnsservers ${SERVICE})\n"
         dump_proxy_state ${SERVICE}
+        printf "\nNetwork Details:${SEPARATOR}"
         networksetup -getinfo ${SERVICE}
     fi
 }
 
 dump_location_details() {
 
-    printf "\nCurrent Location:${SEPARATOR}$(networksetup -getcurrentlocation)"
+    printf "\nCurrent Location - [$(networksetup -getcurrentlocation)]${SEPARATOR}"
     dump_details_for_service "Wi-Fi"
     dump_details_for_service "Ethernet"
     printf "\nAvailable Locations:${SEPARATOR}$(networksetup -listlocations)\n"

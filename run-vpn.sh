@@ -1,6 +1,9 @@
 #!/bin/bash -e
 
-source common.sh
+export COMMON_LIB_PATH="$(dirname ${BASH_SOURCE[0]})/common.sh"
+#echo "COMMON_LIB_PATH=${COMMON_LIB_PATH}"
+source "${COMMON_LIB_PATH}"
+
 
 # Run the vpn command, using the details from the config file
 # On exit, clean up any routes and proxies
@@ -38,18 +41,19 @@ validate_location() {
     fi
 }
 
-route_clean_up() {
+network_clean_up() {
     # Clear the traps
     trap - EXIT SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGFPE SIGTERM
     printf "\nClean up proxy:\n========================\n"
     stop_proxy "${NETWORK_SERVICE_NAME}"
     printf "\nClean up Route:\n========================\nDeleting route for VPN Host [${VPN_HOST}]\n"
     sudo -p "${SUDO_PROMPT}" route delete "${VPN_HOST}"
+    reset_DNS
 }
 
 validate_location
 
-trap route_clean_up EXIT SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGFPE SIGTERM
+trap network_clean_up EXIT SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGFPE SIGTERM
 
 echo "VPN_URI=${VPN_URI}"
 vpn_login "${VPN_URI}"

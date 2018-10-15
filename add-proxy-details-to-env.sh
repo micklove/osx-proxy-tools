@@ -1,7 +1,23 @@
 #!/bin/bash -e
 
-source common.sh
+# Ensure the script HAS been source'd
+# (else the exported variables won't be available in the shell
+usage() {
+    printf "\nUsage:\n"
+    echo "  Re-run the script using the 'source' command"
+    printf "  (so that the exported variable(s) will be available in your shell)\n\n"
+    echo "  e.g. source ${BASH_SOURCE[0]}"
+    echo "  or   . ${BASH_SOURCE[0]}"
+    exit 1
+}
 
+NOT_SOURCED_ERR_MSG="The script is not being 'sourced', run again with the source command"
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "ERROR the script, ${BASH_SOURCE[0]}, is NOT being sourced ..." && usage
+
+
+export COMMON_LIB_PATH="$(dirname ${BASH_SOURCE[0]})/common.sh"
+#echo "COMMON_LIB_PATH=${COMMON_LIB_PATH}"
+source "${COMMON_LIB_PATH}"
 
 #
 # Should only create the proxies against the network Location from the config file
