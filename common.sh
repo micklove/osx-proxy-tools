@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 export SEPARATOR="\n------------\n"
+export SUDO_PROMPT="Enter sudo password:"
 
 # Utils, shared by the other scripts in this repo
 
@@ -98,8 +99,8 @@ function set_proxy_state() {
     declare PROXY_STATE=${2}
 
     echo "Set ${NETWORK_SERVICE_NAME} proxies state to [${PROXY_STATE}]"
-    sudo networksetup -setwebproxystate "${NETWORK_SERVICE_NAME}" "${PROXY_STATE}"
-    sudo networksetup -setsecurewebproxystate "${NETWORK_SERVICE_NAME}" "${PROXY_STATE}"
+    sudo -p "${SUDO_PROMPT}" networksetup -setwebproxystate "${NETWORK_SERVICE_NAME}" "${PROXY_STATE}"
+    sudo -p "${SUDO_PROMPT}" networksetup -setsecurewebproxystate "${NETWORK_SERVICE_NAME}" "${PROXY_STATE}"
     dump_proxy_state "${NETWORK_SERVICE_NAME}"
 }
 

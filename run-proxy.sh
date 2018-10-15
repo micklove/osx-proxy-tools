@@ -33,21 +33,21 @@ create_proxy() {
 
     #e.g. networksetup -setwebproxy <networkservice> <domain> <port number> <authenticated> <username> <password>
     # ignore any errors written to stderr, as the return code appears to always be 0 :(
-    sudo networksetup -setwebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
+    sudo -p "${SUDO_PROMPT}" networksetup -setwebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
     declare RET=$?
     if [ ${RET} -ne 0 ]; then
         printf "\n$(date '+%Y-%m-%d %H:%M:%S') - ERROR - Command failed with return code [${RET}]"
         exit ${RET}
     fi
 
-    sudo networksetup -setsecurewebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
+    sudo -p "${SUDO_PROMPT}" networksetup -setsecurewebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
     declare SECURE_RET=$?
     if [ ${SECURE_RET} -ne 0 ]; then
         printf "\n$(date '+%Y-%m-%d %H:%M:%S') - ERROR - Command failed with return code [${SECURE_RET}]"
         exit ${SECURE_RET}
     fi
 
-    sudo networksetup -setproxybypassdomains "${NETWORK_SERVICE_NAME}" "${PROXY_BYPASS_DOMAINS}"
+    sudo -p "${SUDO_PROMPT}" networksetup -setproxybypassdomains "${NETWORK_SERVICE_NAME}" "${PROXY_BYPASS_DOMAINS}"
     dump_details_for_service "${NETWORK_SERVICE_NAME}"
 }
 
@@ -74,7 +74,7 @@ validate_config_file "${CONFIG_FILE_PATH}"
 
 validate_location
 
-#sudo create_proxy "${CONFIG_FILE_PATH}"
+#sudo -p "${SUDO_PROMPT}" create_proxy "${CONFIG_FILE_PATH}"
 create_proxy "${CONFIG_FILE_PATH}"
 
 

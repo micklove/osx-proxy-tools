@@ -7,7 +7,7 @@ source common.sh
 
 vpn_login() {
   declare VPN="${1}"
-  sudo openconnect --juniper "${VPN}"
+  sudo -p "${SUDO_PROMPT}" openconnect --juniper "${VPN}"
 }
 
 # jq is a pre-requisite, for retrieving config from the json file
@@ -44,7 +44,7 @@ route_clean_up() {
     printf "\nClean up proxy:\n========================\n"
     stop_proxy "${NETWORK_SERVICE_NAME}"
     printf "\nClean up Route:\n========================\nDeleting route for VPN Host [${VPN_HOST}]\n"
-    sudo route delete "${VPN_HOST}"
+    sudo -p "${SUDO_PROMPT}" route delete "${VPN_HOST}"
 }
 
 validate_location
