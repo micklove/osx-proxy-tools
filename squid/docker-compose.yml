@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+  squid-local-proxy:
+    image: ml/squidproxy-compose:latest
+    build:
+      context: .
+    #  args:
+    #    - buildno
+    #    - gitcommithash
+    container_name: local-squid-proxy
+    ports:
+    - "3128:3128"
+    environment:
+      - PROXY_USER
+      - PROXY_PASSWORD
+      - PROXY_PARENT_HOST
+      - PROXY_PARENT_PORT
+      - PROXY_BYPASS_ACL
+      - PROXY_LOCAL_LISTENING_PORT
+    volumes:
+      - ./logs:/var/log/squid
+    restart: always
+
+# Usage
+#   docker-compose build
+#
+#   Ensure the runtime environment vars above are available in the shell.
+#
+#   e.g.
+#   ./add-proxy-config-to-env.sh ../config-file
+#
+#   docker-compose up -d
+#   docker-compose down
+#
+# See https://docs.docker.com/compose/compose-file/#dockerfile
