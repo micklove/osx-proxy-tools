@@ -1,7 +1,16 @@
 # Proxy tools for OSX
 
 ### Usage
-Used to manage location switching, proxies, etc... from the command line, using a json config file.
+Used to manage location switching, proxies, etc... from the command line, using a json config file. 
+
+Using the details from the proxy-config.json, the Scripts will:
++ Create a new OSX Network Location, in the Network preferences page
++ Populate the proxy configuration for your new Location
++ Populate the DNS configuration for your new Location
++ Provide helper scripts, to populate the proxy configuration in your shell session.
++ Provide helper scripts to switch between OSX Network Locations on the command line.
++ Optional: Create a Local squid proxy (In Docker), that handles comms to the remote proxy.
+
 
 ### Prerequisites
 `jq` is required. Follow the instructions [here](https://github.com/stedolan/jq) to install it.
@@ -34,18 +43,33 @@ To help with route issues, on script exit, the vpn route is removed. Will requir
 ```
 
 #### 4. Create Proxy config
-Creates a web proxy and secure proxy, in the Location, host, port, bypass domains, etc... mentioned in the config file
+Creates the configuraton, in the OSX Networks preferences pane, for a web proxy and secure proxy. 
+The proxy-config file is used to populate the user, password, host, port, bypass domains, etc... mentioned in the config file
 nb: Uses proxy username and password from the keychain.
 
 ```bash
 ./run-proxy.sh /path/to/proxy-config.json
 ```
 
+##### Running a local proxy
+See the [Docker squid README](./squid/README.md) for details on running a local instance of squid, that will run a local proxy (that handles the communication with the remote proxy.)
+
+To use the local proxy, enable the `localproxy.enabled` property to "true" in the proxy config.
+
 
 #### 5. Add Proxy config as env variables
-To use the proxy on the command line, `source` the [add-proxy-details-to-env.sh](add-proxy-details-to-env.sh) file
+To use the proxy configuration on the command line, `source` the [add-proxy-details-to-env.sh](add-proxy-details-to-env.sh) file
 ```bash
 source ./toggle-proxy-details-in-env.sh /path/to/proxy-config.json
+```
+
+This will add the details of the proxy into the current shell environment, e.g.
+
+```bash
+export  HTTP_PROXY=http://localhost:3128
+export  http_proxy=http://localhost:3128
+export HTTPS_PROXY=http://localhost:3128
+export https_proxy=http://localhost:3128
 ```
 
 nb: If you `source` the [common.sh](common.sh) script, you can use the following helper functions:
