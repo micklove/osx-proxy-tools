@@ -25,6 +25,16 @@ create_proxy() {
     declare AUTH="on"
     declare PROXY_OWNER=$(get_config_key "${CONFIG_FILE_PATH}" '.proxy.owner')
 
+    declare USE_LOCAL_PROXY=$(get_config_key "${CONFIG_FILE_PATH}" '.localproxy.enabled')
+
+    if [[ "${USE_LOCAL_PROXY}" == "true" ]]; then
+        PROXY_USER=""
+        PROXY_PASSWORD=""
+        AUTH=""
+        PROXY_HOST=$(get_config_key "${CONFIG_FILE_PATH}" '.localproxy.host')
+        PROXY_PORT=$(get_config_key "${CONFIG_FILE_PATH}" '.localproxy.port')
+    fi
+
     #TODO - testing only
 #    echo "CONFIG_FILE_PATH=${CONFIG_FILE_PATH}"
 #    echo "PROXY_USER=${PROXY_USER}"
@@ -36,14 +46,29 @@ create_proxy() {
 
     #e.g. networksetup -setwebproxy <networkservice> <domain> <port number> <authenticated> <username> <password>
     # ignore any errors written to stderr, as the return code appears to always be 0 :(
-    sudo -p "${SUDO_PROMPT}" networksetup -setwebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
+    echo "setup web proxy"
+
+    echo "${NETWORK_SERVICE_NAME}"
+    echo "${PROXY_HOST}"
+    echo "${PROXY_PORT}"
+    echo "${NETWORK_SERVICE_NAME}"
+
+    if [[ "${USE_LOCAL_PROXY}" == "true" ]]; then
+        sudo -p "${SUDO_PROMPT}" networksetup -setwebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" 2>/dev/null
+    else
+        sudo -p "${SUDO_PROMPT}" networksetup -setwebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
+    fi
     declare RET=$?
     if [ ${RET} -ne 0 ]; then
         printf "\n$(date '+%Y-%m-%d %H:%M:%S') - ERROR - Command failed with return code [${RET}]"
         exit ${RET}
     fi
 
-    sudo -p "${SUDO_PROMPT}" networksetup -setsecurewebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
+    if [[ "${USE_LOCAL_PROXY}" == "true" ]]; then
+        sudo -p "${SUDO_PROMPT}" networksetup -setsecurewebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" 2>/dev/null
+    else
+        sudo -p "${SUDO_PROMPT}" networksetup -setsecurewebproxy "${NETWORK_SERVICE_NAME}" "${PROXY_HOST}" "${PROXY_PORT}" "${AUTH}" "${PROXY_USER}" "${PROXY_PASSWORD}" 2>/dev/null
+    fi
     declare SECURE_RET=$?
     if [ ${SECURE_RET} -ne 0 ]; then
         printf "\n$(date '+%Y-%m-%d %H:%M:%S') - ERROR - Command failed with return code [${SECURE_RET}]"

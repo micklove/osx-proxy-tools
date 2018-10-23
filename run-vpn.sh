@@ -44,8 +44,6 @@ validate_location() {
 network_clean_up() {
     # Clear the traps
     trap - EXIT SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGFPE SIGTERM
-    printf "\nClean up proxy:\n========================\n"
-    stop_proxy "${NETWORK_SERVICE_NAME}"
     printf "\nClean up Route:\n========================\nDeleting route for VPN Host [${VPN_HOST}]\n"
     sudo -p "${SUDO_PROMPT}" route delete "${VPN_HOST}"
     reset_DNS

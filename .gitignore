@@ -1,5 +1,5 @@
 tmp/
 idea
 *.iml
-
-
+*proxy-config.json
+squid/logs/*.log

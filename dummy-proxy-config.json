@@ -14,6 +14,12 @@
     "bypass-domains": "*.local, 169.254/16, *.corp.myco.com, localhost, *.in.myco.com.au, *.other.myco.com",
     "proxy-username-regex": "^d[0-9]{6}"
   },
+  "localproxy": {
+    "enabled": "true",
+    "host": "localhost",
+    "port": "3128",
+    "acl": "corp.myco.com localhost in.myco.com.au other.myco.com"
+  },
   "vpn": {
     "scheme": "https",
     "host": "vpn.myco.com/"

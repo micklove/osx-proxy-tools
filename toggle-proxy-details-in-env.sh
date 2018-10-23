@@ -14,30 +14,13 @@ usage() {
 NOT_SOURCED_ERR_MSG="The script is not being 'sourced', run again with the source command"
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "ERROR the script, ${BASH_SOURCE[0]}, is NOT being sourced ..." && usage
 
-
-export COMMON_LIB_PATH="$(dirname ${BASH_SOURCE[0]})/common.sh"
+declare BASE_PATH="$(dirname ${BASH_SOURCE[0]})"
+export COMMON_LIB_PATH="${BASE_PATH}/common.sh"
 #echo "COMMON_LIB_PATH=${COMMON_LIB_PATH}"
 source "${COMMON_LIB_PATH}"
 
-#
-# Should only create the proxies against the network Location from the config file
-#
-validate_location() {
-    declare CONFIG_LOCATION_NAME=$(get_config_key "${CONFIG_FILE_PATH}" '.location.name')
-    declare CURRENT_LOCATION="$(networksetup -getcurrentlocation)"
-    if [[ "${CURRENT_LOCATION}" == "${CONFIG_LOCATION_NAME}" ]]; then
-        echo "Using correct Location, [${CURRENT_LOCATION}]"
-    else
-        echo "Current location is [${CURRENT_LOCATION}], Switch to Location [${CONFIG_LOCATION_NAME}], before setting up proxy config"
-        echo "e.g. run-location.sh proxy-config.json my-vpn "
-        echo "Cleaning up env proxy vars and quitting."
-        clean_env_vars
-    fi
-}
-
 declare CONFIG_FILE_PATH="${1}"
 validate_config_file "${CONFIG_FILE_PATH}"
-
 
 declare PROXY_HOST=$(scutil --proxy | grep HTTPProxy | awk {'print $3'})
 declare PROXY_PORT=$(scutil --proxy | grep HTTPPort | awk {'print $3'})
@@ -46,16 +29,30 @@ declare PROXY_SCHEME=$(get_config_key "${CONFIG_FILE_PATH}" '.proxy.scheme')
 declare PROXY_SERVICE_NAME_IN_KEYCHAIN=$(get_config_key "${CONFIG_FILE_PATH}" '.keychain."proxy-service-name-in-keychain"')
 declare PROXY_USER="$(get_proxy_user_from_keychain "${PROXY_SERVICE_NAME_IN_KEYCHAIN}" "${PROXY_USERNAME_REGEX}")"
 declare PROXY_PASSWORD="$(get_proxy_password_from_keychain "${PROXY_SERVICE_NAME_IN_KEYCHAIN}")"
+declare CONFIG_LOCATION_NAME=$(get_config_key "${CONFIG_FILE_PATH}" '.location.name')
+declare CURRENT_LOCATION="$(networksetup -getcurrentlocation)"
 
-echo "CONFIG_FILE_PATH=${CONFIG_FILE_PATH}"
-echo "PROXY_USER=${PROXY_USER}"
-echo "PROXY_HOST=${PROXY_HOST}"
-echo "PROXY_PORT=${PROXY_PORT}"
+declare USE_LOCAL_PROXY=$(get_config_key "${CONFIG_FILE_PATH}" '.localproxy.enabled')
+declare PROXY_URI=""
 
-declare PROXY_URI=${PROXY_SCHEME}://"${PROXY_USER}:${PROXY_PASSWORD}"\@${PROXY_HOST}:${PROXY_PORT}/
-export  HTTP_PROXY="${PROXY_URI}"
-export  http_proxy="${PROXY_URI}"
-export HTTPS_PROXY="${PROXY_URI}"
-export https_proxy="${PROXY_URI}"
+# Only setup the proxy shell env if the correct osx network "Location" is currently selected
+if [[ "${CURRENT_LOCATION}" == "${CONFIG_LOCATION_NAME}" ]]; then
+    echo "Using correct Location, [${CURRENT_LOCATION}]"
 
-validate_location
+    # If using local proxy, e.g. cntlm, or squid, on localhost don't use creds
+    if [[ "${USE_LOCAL_PROXY}" == "true" ]]; then
+        PROXY_USER=""
+        PROXY_PASSWORD=""
+        PROXY_URI=${PROXY_SCHEME}://${PROXY_HOST}:${PROXY_PORT}/
+        echo "Using Local proxy URI=${PROXY_URI}"
+    else
+        PROXY_URI=${PROXY_SCHEME}://"${PROXY_USER}:${PROXY_PASSWORD}"\@${PROXY_HOST}:${PROXY_PORT}/
+    fi
+
+    source "${BASE_PATH}/add-proxy-details-to-shell.sh" "${PROXY_USER}" "${PROXY_HOST}" "${PROXY_PORT}" "${PROXY_URI}"
+else
+    echo "Current location is [${CURRENT_LOCATION}], Switch to Location [${CONFIG_LOCATION_NAME}], before setting up proxy config"
+    echo "e.g. run-location.sh proxy-config.json my-vpn "
+    echo "Cleaning up env proxy vars and quitting."
+    clean_env_vars
+fi

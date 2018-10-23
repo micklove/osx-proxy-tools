@@ -1,7 +1,7 @@
 # Proxy tools for OSX
 
 ### Usage
-Used to manage location switching, proxies, etc... from the commandline, using a json config file.
+Used to manage location switching, proxies, etc... from the command line, using a json config file.
 
 ### Prerequisites
 `jq` is required. Follow the instructions [here](https://github.com/stedolan/jq) to install it.
@@ -27,7 +27,7 @@ If the network Location IS an existing osx Network Location, the script simply s
 
 #### 3. Run the vpn command
 Use the vpn details from the config file, hostname, etc...
-To help with route issues, on script exit, the proxy is disabled and the vpn route is removed. Will require sudo.
+To help with route issues, on script exit, the vpn route is removed. Will require sudo.
 
 ```bash
 ./run-vpn.sh /path/to/proxy-config.json
@@ -45,7 +45,7 @@ nb: Uses proxy username and password from the keychain.
 #### 5. Add Proxy config as env variables
 To use the proxy on the command line, `source` the [add-proxy-details-to-env.sh](add-proxy-details-to-env.sh) file
 ```bash
-source ./add-proxy-details-to-env.sh /path/to/proxy-config.json
+source ./toggle-proxy-details-in-env.sh /path/to/proxy-config.json
 ```
 
 nb: If you `source` the [common.sh](common.sh) script, you can use the following helper functions:
@@ -73,6 +73,6 @@ alias home='/path/to/scripts/run-location.sh /path/to/scripts/my-proxy-config.js
 
 
 ## Enable the proxy and expose proxy vars to bash env
-alias myproxy='/path/to/scripts/run-proxy.sh /path/to/scripts/my-proxy-config.json && source /path/to/scripts/add-proxy-details-to-env.sh /path/to/scripts/my-proxy-config.json'
+alias myproxy='/path/to/scripts/run-proxy.sh /path/to/scripts/my-proxy-config.json && source /path/to/scripts/toggle-proxy-details-in-env.sh /path/to/scripts/my-proxy-config.json'
 
 ```
