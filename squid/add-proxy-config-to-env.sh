@@ -8,7 +8,7 @@ usage() {
     printf "  (so that the exported variable(s) will be available in your shell)\n\n"
     echo "  e.g. source ${BASH_SOURCE[0]}"
     echo "  or   . ${BASH_SOURCE[0]}"
-    exit 1
+    exit 0
 }
 
 NOT_SOURCED_ERR_MSG="The script is not being 'sourced', run again with the source command"
